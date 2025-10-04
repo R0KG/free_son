@@ -1,5 +1,5 @@
 import { google } from 'googleapis';
-import { SheetCalculationRow } from '@/types';
+import { SheetCalculationRow, SheetLeadRow } from '@/types';
 
 export interface SheetsClientOptions {
   spreadsheetId: string;
@@ -54,6 +54,27 @@ export class SheetsClient {
     await this.sheets.spreadsheets.values.append({
       spreadsheetId: this.spreadsheetId,
       range: `${this.calculationsSheet}!A:N`,
+      valueInputOption: 'RAW',
+      requestBody: { values },
+    });
+  }
+
+  async appendLead(row: SheetLeadRow): Promise<void> {
+    const values = [
+      [
+        row.timestamp,
+        row.projectId,
+        row.name,
+        row.phone,
+        row.email,
+        row.plotId,
+        row.houseProjectId,
+        row.constructionFormat,
+      ],
+    ];
+    await this.sheets.spreadsheets.values.append({
+      spreadsheetId: this.spreadsheetId,
+      range: `${this.leadsSheet}!A:H`,
       valueInputOption: 'RAW',
       requestBody: { values },
     });

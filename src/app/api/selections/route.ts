@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { saveSelection, getSelection } from '@/lib/dataStorage';
+import { createProject, getProject } from '@/lib/dataStorage';
+import { getSheetsClient } from '@/lib/sheets';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,12 +14,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const savedSelection = await saveSelection(selection, contactInfo, bookingInfo);
+    const newProject = await createProject({
+        selection,
+        contact: contactInfo,
+    });
+
+    // Append to Google Sheets (best effort)
+    const sheets = getSheetsClient();
+    if (sheets) {
+        try {
+            await sheets.appendLead({
+                timestamp: new Date().toISOString(),
+                projectId: newProject.id,
+                name: contactInfo.name,
+                phone: contactInfo.phone,
+                email: contactInfo.email,
+                plotId: selection.plotId,
+                houseProjectId: selection.houseProjectId,
+                constructionFormat: selection.constructionFormat,
+            });
+        } catch (e) {
+            console.warn('Failed to append lead to Google Sheets:', (e as Error).message);
+        }
+    }
 
     return NextResponse.json({
       success: true,
-      data: savedSelection,
-      dashboardUrl: `/dashboard/${savedSelection.id}`
+      data: newProject,
+      dashboardUrl: `/dashboard/${newProject.id}`
     });
   } catch (error) {
     console.error('Error saving selection:', error);
@@ -36,28 +59,28 @@ export async function GET(request: NextRequest) {
 
     if (!id) {
       return NextResponse.json(
-        { error: 'Selection ID is required' },
+        { error: 'Project ID is required' },
         { status: 400 }
       );
     }
 
-    const selection = await getSelection(id);
+    const project = await getProject(id);
 
-    if (!selection) {
+    if (!project) {
       return NextResponse.json(
-        { error: 'Selection not found' },
+        { error: 'Project not found' },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      data: selection
+      data: project
     });
   } catch (error) {
-    console.error('Error getting selection:', error);
+    console.error('Error getting project:', error);
     return NextResponse.json(
-      { error: 'Failed to get selection' },
+      { error: 'Failed to get project' },
       { status: 500 }
     );
   }

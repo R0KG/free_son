@@ -1,20 +1,63 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelection } from '@/context/SelectionContext';
+import CalculatorForm from './CalculatorForm';
+import PriceBreakdown from './PriceBreakdown';
+import ProjectProgress from './ProjectProgress';
+import { ProjectSchema } from '@/types/schemas';
 
 export default function PersonalDashboard() {
   const { selection, plots, houseProjects } = useSelection();
+  const [project, setProject] = useState<ProjectSchema | null>(null);
   const [uniqueUrl, setUniqueUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Use the actual saved selection ID for the URL
     if (selection.bookingId) {
       const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
       setUniqueUrl(`${baseUrl}/dashboard/${selection.bookingId}`);
+      
+      const selectedPlot = plots.find(p => p.id === selection.plotId);
+      const selectedHouse = houseProjects.find(h => h.id === selection.houseProjectId);
+      
+      const newProject: ProjectSchema = {
+        id: selection.bookingId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        selection: selection,
+        calculationInput: {
+          area: selectedHouse?.area || 100,
+          floors: (selectedHouse?.floors || 1) as 1 | 2 | 3,
+          wallMaterial: 'wood',
+          foundationType: 'slab',
+          finishLevel: 'shell',
+          engineeringOptions: [],
+          extras: [],
+          promoMultiplier: 1,
+        },
+        calculationResult: {
+            pricingVersion: '1.0',
+            baseRatePerM2: 1000,
+            basePrice: (selectedPlot?.price || 0) + (selectedHouse?.price || 0),
+            items: [],
+            totalPrice: (selectedPlot?.price || 0) + (selectedHouse?.price || 0),
+            stages: [],
+            durationWeeks: 0,
+        },
+        progress: {
+            steps: [
+                { key: 'selection', label: 'Начальный выбор', completed: true },
+                { key: 'parameters', label: 'Параметры проекта', completed: false },
+                { key: 'summary', label: 'Итоговая смета', completed: false },
+                { key: 'contacts', label: 'Контактные данные', completed: false },
+            ],
+            percent: 25,
+        }
+      };
+      setProject(newProject);
     }
-  }, [selection]);
+  }, [selection, plots, houseProjects]);
 
   const copyToClipboard = async () => {
     try {
@@ -26,10 +69,24 @@ export default function PersonalDashboard() {
     }
   };
 
+  const handleCalculationUpdate = (result: any) => {
+    if (project) {
+        setProject({
+            ...project,
+            calculationResult: result,
+            progress: {
+                ...project.progress!,
+                percent: 50,
+                steps: project.progress!.steps.map(s => s.key === 'parameters' ? {...s, completed: true} : s)
+            }
+        });
+    }
+  };
+
   const selectedPlot = plots.find(p => p.id === selection.plotId);
   const selectedHouse = houseProjects.find(h => h.id === selection.houseProjectId);
 
-  const totalCost = (selectedPlot?.price || 0) + (selectedHouse?.price || 0);
+  const totalCost = project?.calculationResult?.totalPrice || (selectedPlot?.price || 0) + (selectedHouse?.price || 0);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -101,41 +158,56 @@ export default function PersonalDashboard() {
           </div>
         </div>
 
-        {/* Personal URL */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            Персональная ссылка
-          </h3>
-          <p className="text-gray-600 mb-4">
-            Сохраните эту ссылку, чтобы в любой момент вернуться к вашему выбору
-          </p>
-
-          <div className="bg-gray-50 border rounded-lg p-3 mb-4">
-            <p className="text-sm text-gray-800 break-all">
-              {uniqueUrl}
+        {/* Personal URL & Progress */}
+        <div className="space-y-8">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              Персональная ссылка
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Сохраните эту ссылку, чтобы в любой момент вернуться к вашему выбору
             </p>
-          </div>
 
-          <button
-            onClick={copyToClipboard}
-            className={`
+            <div className="bg-gray-50 border rounded-lg p-3 mb-4">
+              <p className="text-sm text-gray-800 break-all">
+                {uniqueUrl}
+              </p>
+            </div>
+
+            <button
+              onClick={copyToClipboard}
+              className={`
               w-full px-4 py-2 rounded-lg font-medium transition-colors
               ${copied
                 ? 'bg-green-600 text-white'
                 : 'bg-blue-600 text-white hover:bg-blue-700'
               }
             `}
-          >
-            {copied ? '✓ Скопировано!' : 'Скопировать ссылку'}
-          </button>
+            >
+              {copied ? '✓ Скопировано!' : 'Скопировать ссылку'}
+            </button>
 
-          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
-              💡 Эта ссылка уникальна для вашего выбора и позволит вам или вашему менеджеру
-              быстро получить доступ ко всем деталям вашего проекта.
-            </p>
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                💡 Эта ссылка уникальна для вашего выбора и позволит вам или вашему менеджеру
+                быстро получить доступ ко всем деталям вашего проекта.
+              </p>
+            </div>
           </div>
+          {project && <ProjectProgress progress={project.progress} />}
         </div>
+      </div>
+      
+      {/* Calculator and Price Breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {project && (
+          <CalculatorForm
+            initialData={project.calculationInput}
+            onCalculate={handleCalculationUpdate}
+            projectId={project.id!}
+          />
+        )}
+        <PriceBreakdown result={project?.calculationResult} />
       </div>
 
       {/* Next Steps */}

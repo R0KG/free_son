@@ -1,0 +1,119 @@
+[
+  {
+    "id": "86byt11pkeun4dul2tsqn",
+    "createdAt": "2025-10-04T08:35:54.993Z",
+    "updatedAt": "2025-10-04T08:36:14.331Z",
+    "selection": {
+      "plotId": "plot-6",
+      "constructionFormat": "self",
+      "houseProjectId": "project-2",
+      "bookingId": null
+    },
+    "contact": {
+      "name": "d",
+      "phone": "d",
+      "email": "d"
+    },
+    "calculationInput": {
+      "area": 200,
+      "floors": 2,
+      "wallMaterial": "wood",
+      "foundationType": "pile",
+      "finishLevel": "shell",
+      "engineeringOptions": [
+        "ventilation"
+      ],
+      "extras": [
+        "terrace"
+      ],
+      "promoMultiplier": 1
+    },
+    "calculationResult": {
+      "pricingVersion": "2025-10-01",
+      "baseRatePerM2": 75000,
+      "basePrice": 13770000,
+      "items": [
+        {
+          "id": "foundation_pile",
+          "label": "Фундамент (pile)",
+          "type": "per_m2",
+          "unitPrice": 12000,
+          "quantity": 200,
+          "amount": 2400000,
+          "category": "foundation"
+        },
+        {
+          "id": "eng_ventilation",
+          "label": "Вентиляция приточно-вытяжная",
+          "type": "fixed",
+          "unitPrice": 250000,
+          "amount": 250000,
+          "category": "engineering"
+        },
+        {
+          "id": "extra_terrace",
+          "label": "Терраса",
+          "type": "per_m2",
+          "unitPrice": 14000,
+          "quantity": 40,
+          "amount": 560000,
+          "category": "extras"
+        }
+      ],
+      "totalPrice": 16980000,
+      "stages": [
+        {
+          "key": "design",
+          "label": "Проектирование",
+          "weeks": 4
+        },
+        {
+          "key": "foundation",
+          "label": "Фундамент",
+          "weeks": 6
+        },
+        {
+          "key": "frame",
+          "label": "Коробка",
+          "weeks": 12
+        },
+        {
+          "key": "engineering",
+          "label": "Инженерия",
+          "weeks": 6
+        },
+        {
+          "key": "finishing",
+          "label": "Отделка",
+          "weeks": 7
+        }
+      ],
+      "durationWeeks": 35
+    },
+    "progress": {
+      "steps": [
+        {
+          "key": "selection",
+          "label": "Выбор проекта/участка",
+          "completed": true
+        },
+        {
+          "key": "parameters",
+          "label": "Параметры и опции",
+          "completed": true
+        },
+        {
+          "key": "summary",
+          "label": "Итоговый расчёт",
+          "completed": true
+        },
+        {
+          "key": "contacts",
+          "label": "Контакты",
+          "completed": true
+        }
+      ],
+      "percent": 100
+    }
+  }
+]

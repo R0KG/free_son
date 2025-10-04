@@ -20,10 +20,11 @@ export interface HouseProject {
   id: string;
   name: string;
   description: string;
-  image: string;
   area: number;
-  bedrooms: number;
+  floors: number;
   price: number;
+  image: string;
+  bedrooms: number;
   features: string[];
 }
 
@@ -119,7 +120,7 @@ export interface Project {
   };
 }
 
-export interface SheetCalculationRow {
+export type SheetCalculationRow = {
   timestamp: string;
   projectId: string;
   pricingVersion: string;
@@ -134,7 +135,18 @@ export interface SheetCalculationRow {
   baseRatePerM2: number;
   basePrice: number;
   totalPrice: number;
-}
+};
 
-export { zCalculationInput, zPriceItem, zStageEstimate, zCalculationResult, zProgressState, zProject, zProjectCreate } from './schemas.js';
-export type { CalculationInputSchema, CalculationResultSchema, ProjectSchema, ProjectCreateSchema } from './schemas.js';
+export type SheetLeadRow = {
+  timestamp: string;
+  projectId: string;
+  name: string;
+  phone: string;
+  email: string;
+  plotId: string | null;
+  houseProjectId: string | null;
+  constructionFormat: string | null;
+};
+
+export { zCalculationInput, zPriceItem, zStageEstimate, zCalculationResult, zProgressState, zProject, zProjectCreate } from './schemas';
+export type { CalculationInputSchema, CalculationResultSchema, ProjectSchema, ProjectCreateSchema } from './schemas';

@@ -27,9 +27,9 @@ export default function HouseSelection({ onNext }: HouseSelectionProps) {
   const getImageUrl = (projectName: string) => {
     // In a real app, these would be actual image URLs
     const imageMap: Record<string, string> = {
-      'Современный коттедж': 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=250&fit=crop&auto=format',
-      'Классический дом': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=250&fit=crop&auto=format',
-      'Минималистичный': 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=250&fit=crop&auto=format',
+      'Современный лофт': 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=250&fit=crop&auto=format',
+      'Семейный дом': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=250&fit=crop&auto=format',
+      'Уютный коттедж': 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=400&h=250&fit=crop&auto=format',
     };
     return imageMap[projectName] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=250&fit=crop&auto=format';
   };
@@ -108,8 +108,8 @@ export default function HouseSelection({ onNext }: HouseSelectionProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                   {project.name.includes('Современный') && 'Современный'}
-                  {project.name.includes('Классический') && 'Классический'}
-                  {project.name.includes('Минималистичный') && 'Минимализм'}
+                  {project.name.includes('Семейный') && 'Классический'}
+                  {project.name.includes('Уютный') && 'Минимализм'}
                 </div>
               </div>
 
@@ -126,7 +126,7 @@ export default function HouseSelection({ onNext }: HouseSelectionProps) {
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1">
-                  {project.features.slice(0, 2).map((feature, index) => (
+                  {project.features?.slice(0, 2).map((feature, index) => (
                     <span key={index} className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
                       {feature}
                     </span>
@@ -170,7 +170,7 @@ export default function HouseSelection({ onNext }: HouseSelectionProps) {
                   Ключевые особенности
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {project.features.map((feature, index) => (
+                  {project.features?.map((feature, index) => (
                     <span
                       key={index}
                       className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-green-100 hover:to-green-200 hover:text-green-800 transition-all duration-200 group/feature"
@@ -410,7 +410,7 @@ export default function HouseSelection({ onNext }: HouseSelectionProps) {
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">{project.name}</div>
-                        <div className="text-sm text-gray-500">{project.features.slice(0, 2).join(', ')}</div>
+                        <div className="text-sm text-gray-500">{project.features?.slice(0, 2).join(', ')}</div>
                       </div>
                     </div>
                   </td>
@@ -436,12 +436,12 @@ export default function HouseSelection({ onNext }: HouseSelectionProps) {
                     <span className={`
                       inline-flex px-2 py-1 text-xs font-semibold rounded-full
                       ${project.name.includes('Современный') ? 'bg-blue-100 text-blue-800' : ''}
-                      ${project.name.includes('Классический') ? 'bg-purple-100 text-purple-800' : ''}
-                      ${project.name.includes('Минималистичный') ? 'bg-green-100 text-green-800' : ''}
+                      ${project.name.includes('Семейный') ? 'bg-purple-100 text-purple-800' : ''}
+                      ${project.name.includes('Уютный') ? 'bg-green-100 text-green-800' : ''}
                     `}>
                       {project.name.includes('Современный') && 'Современный'}
-                      {project.name.includes('Классический') && 'Классический'}
-                      {project.name.includes('Минималистичный') && 'Минимализм'}
+                      {project.name.includes('Семейный') && 'Классический'}
+                      {project.name.includes('Уютный') && 'Минимализм'}
                     </span>
                   </td>
                 </tr>

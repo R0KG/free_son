@@ -33,7 +33,7 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({ children }
     bookingId: null,
   });
 
-  // Mock data - in real app, this would come from API
+  // Mock data for plots - in real app, this would come from API
   const [plots] = useState<Plot[]>([
     {
       id: 'plot-1',
@@ -159,38 +159,25 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({ children }
     },
   ]);
 
-  const [houseProjects] = useState<HouseProject[]>([
-    {
-      id: 'house-1',
-      name: 'Современный коттедж',
-      description: 'Просторный двухэтажный дом в современном стиле с панорамными окнами и террасой. Идеальное решение для большой семьи, ценящей комфорт и стиль.',
-      image: '/house-1.jpg',
-      area: 180,
-      bedrooms: 4,
-      price: 45000,
-      features: ['Двухместный гараж', 'Просторная терраса', 'Финская сауна', 'Гардеробная', 'Балкон'],
-    },
-    {
-      id: 'house-2',
-      name: 'Классический дом',
-      description: 'Уютный дом в классическом стиле с функциональной мансардой и камином. Отличный выбор для тех, кто предпочитает традиционные решения.',
-      image: '/house-2.jpg',
-      area: 160,
-      bedrooms: 3,
-      price: 38000,
-      features: ['Мансарда с балконом', 'Декоративный камин', 'Подвал-кладовая', 'Крытая веранда', 'Ландшафтный дизайн'],
-    },
-    {
-      id: 'house-3',
-      name: 'Минималистичный',
-      description: 'Стильный дом в минималистичном дизайне с плоской крышей и большими окнами. Современное решение для динамичной городской жизни.',
-      image: '/house-3.jpg',
-      area: 140,
-      bedrooms: 3,
-      price: 32000,
-      features: ['Плоская эксплуатируемая крыша', 'Панорамные окна', 'Летний сад', 'Система "умный дом"', 'Энергоэффективность'],
-    },
-  ]);
+  const [houseProjects, setHouseProjects] = useState<HouseProject[]>([]);
+
+  useEffect(() => {
+    const fetchHouseProjects = async () => {
+      try {
+        const response = await fetch('/api/projects');
+        if (!response.ok) {
+          throw new Error('Failed to fetch house projects');
+        }
+        const data = await response.json();
+        setHouseProjects(data);
+      } catch (error) {
+        console.error(error);
+        // Handle error state in a real app
+      }
+    };
+
+    fetchHouseProjects();
+  }, []);
 
   const updateSelection = (updates: Partial<UserSelection>) => {
     setSelection(prev => ({ ...prev, ...updates }));
